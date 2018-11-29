@@ -149,11 +149,14 @@ tiempoViaje personaje = (/ velocidadDeMovimiento personaje).(distancia personaje
 
 distancia personaje locacion = (resuelvoDistancia (posicion personaje) locacion)
 
-resuelvoDistancia (x1 , y1) (x2 , y2) = sqrt (x'*x' + y'*y')
-  where
+resuelvoDistancia (x1 , y1) (x2 , y2) = sqrt (x'*x' + y'*y') -- Esto se puede resolver de la manera comentada debajo (para no usar el where)
+  where                                                      -- pero me parecio que quedaba mas declarativo así
     x' = x1 - x2
     y' = y1 - y2
 
+--resuelvoDistancia (x1 , y1) (x2 , y2) = sqrt (diferenciaAlCuadrado x1 x2 + diferenciaAlCuadrado y1 y2)
+
+diferenciaAlCuadrado x y = (x-y)^2
 
 ------------------------- AGREGADO 2 ----------------------------------------
 
@@ -165,11 +168,17 @@ coraje personaje = ((/ 10).realToFrac.poderDeAtaque) personaje
 tiempoViajeMontura:: Montura->Personaje->Locacion->Float
 tiempoViajeMontura Caballo personaje locacion=  modificarTiempoViaje personaje locacion (/ (coraje personaje))
 
+
+
 tiempoViajeMontura (Hipogrifo humor) pj@(UnPersonaje _ armadura _ _ _ _) locacion
             | any estaGastada armadura = modificarTiempoViaje pj locacion (/ humor)
             | otherwise = tiempoViaje pj locacion
 
-tiempoViajeMontura (Escoba nivelMagia) pj@(UnPersonaje _ _ (Baculo _ _) _ _ _) locacion = modificarTiempoViaje pj locacion (/ nivelMagia)
+--Sin usar el '@' la funcion quedaria como esta comentada, pero como solo necesitaba pasar el personaje no me parecia que justificaba
+--escribir todos los atributos para despues crear un Personaje con ellos, en cambio con el '@' puedo simplemente mandar el parametro
+
+tiempoViajeMontura (Escoba nivelMagia) (UnPersonaje vida arm (Baculo nom int) pos vm energ) locacion = modificarTiempoViaje (UnPersonaje vida arm (Baculo nom int) pos vm energ) locacion (/ nivelMagia)
+--tiempoViajeMontura (Escoba nivelMagia) pj@(UnPersonaje _ _ (Baculo _ _) _ _ _) locacion = modificarTiempoViaje pj locacion (/ nivelMagia)
 
 tiempoViajeMontura (Escoba _) personaje locacion = tiempoViaje personaje locacion
 
